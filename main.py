@@ -1,8 +1,7 @@
 import os
 import numpy as np
 from collections import Counter
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
-from sklearn.svm import SVC, NuSVC, LinearSVC
+from sklearn.naive_bayes import MultinomialNB, BernoulliNB
 from sklearn.metrics import confusion_matrix
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -33,9 +32,23 @@ X_train_ifidr = tfidf_transformer.fit_transform(X_train_counts) #Term Frequencie
 
 #Train the classifier
 MultiNB_spam_filter = MultinomialNB().fit(X_train_ifidr, label)
-Guass_spam_filter = GaussianNB().fit(X_train_ifidr.toarray(), label)
 Bernoulli_spam_filter = BernoulliNB().fit(X_train_ifidr, label)
-LinearSVC_spam_filter = LinearSVC().fit(X_train_ifidr, label)
+
+MultiNB_test_predictions = MultiNB_spam_filter.predict(X_train_ifidr)
+Bernoulli_test_predictions = Bernoulli_spam_filter.predict(X_train_ifidr)
+
+#Test Accuracy
+print("\nTest MultinomialNB:")
+
+print(np.mean(MultiNB_test_predictions == label))
+
+print(confusion_matrix(label, MultiNB_test_predictions))
+
+print("\nTest BernoulliNB:")
+
+print(np.mean(Bernoulli_test_predictions == label))
+
+print(confusion_matrix(label, Bernoulli_test_predictions))
 
 #Seperate label and the message
 test_emails = [line.rstrip() for line in open('./spam_test.txt')]
@@ -47,13 +60,11 @@ X_new_counts = count_vect.transform(test_message) #Tokenizes text
 X_new_tfidf = tfidf_transformer.fit_transform(X_new_counts)
 
 MultiNB_predicted = MultiNB_spam_filter.predict(X_new_tfidf)
-Gaussian_predicted = Guass_spam_filter.predict(X_new_tfidf.toarray())
 Bernoulli_predicted = Bernoulli_spam_filter.predict(X_new_tfidf)
-LinearSVC_predicted = LinearSVC_spam_filter.predict(X_new_tfidf)
 
 #Results
-print("False Not spam\t Correct Not Spam")
-print("\nCorrect Spam\t False Spam")
+print("\nCorrect Not spam\t False Not Spam")
+print("\nFalse Spam\t Correct Spam")
 
 print("\nMultinomialNB:")
 
@@ -61,20 +72,8 @@ print(np.mean(MultiNB_predicted == test_labels))
 
 print(confusion_matrix(test_labels,MultiNB_predicted))
 
-print("\nGaussianNB:")
-
-print(np.mean(Gaussian_predicted == test_labels))
-
-print(confusion_matrix(test_labels,Gaussian_predicted))
-
 print("\nBernoulliNB:")
 
 print(np.mean(Bernoulli_predicted == test_labels))
 
 print(confusion_matrix(test_labels,Bernoulli_predicted))
-
-print("\nLinearSVC:")
-
-print(np.mean(LinearSVC_predicted == test_labels))
-
-print(confusion_matrix(test_labels,LinearSVC_predicted))
