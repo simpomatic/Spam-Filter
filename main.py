@@ -39,6 +39,17 @@ LinearSVC_predicted = LinearSVC_spam_filter.predict(X_new_tfidf)
 
 #Results
 print(np.mean(MultiNB_predicted == test_labels))
+
+print(confusion_matrix(test_labels,MultiNB_predicted))
+
 print(np.mean(Gaussian_predicted == test_labels))
+
+print(confusion_matrix(test_labels,Gaussian_predicted))
+
 print(np.mean(Bernoulli_predicted == test_labels))
+
+print(confusion_matrix(test_labels,Bernoulli_predicted))
+
 print(np.mean(LinearSVC_predicted == test_labels))
+
+print(confusion_matrix(test_labels,LinearSVC_predicted))
